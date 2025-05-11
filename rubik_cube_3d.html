@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rubik's Cube 3D</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    let light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x404040));
+
+    let colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff6600, 0xffffff];
+    let geometry = new THREE.BoxGeometry(1, 1, 1);
+    let materials = colors.map(c => new THREE.MeshBasicMaterial({ color: c }));
+
+    let cube = new THREE.Mesh(geometry, materials);
+    scene.add(cube);
+
+    camera.position.z = 3;
+
+    let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Expose function for Python
+    window.rotateFace = function(face) {
+      if (face === 'Front Clockwise') cube.rotation.z += Math.PI / 2;
+      if (face === 'Right Clockwise') cube.rotation.x += Math.PI / 2;
+      if (face === 'Top Clockwise') cube.rotation.y += Math.PI / 2;
+    };
+  </script>
+</body>
+</html>
